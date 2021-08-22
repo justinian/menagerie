@@ -1,0 +1,3 @@
+[submodule "obelisk"]
+	path = obelisk
+	url = https://github.com/arkutils/Obelisk.git
