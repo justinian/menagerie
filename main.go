@@ -31,7 +31,7 @@ func main() {
 	for _, savepath := range args {
 		info, err := os.Stat(savepath)
 		if err != nil {
-			log.Fatal("%s: %s", savepath, err)
+			log.Fatalf("%s: %s", savepath, err)
 		}
 
 		if !info.IsDir() {
@@ -41,7 +41,7 @@ func main() {
 
 		entries, err := os.ReadDir(savepath)
 		if err != nil {
-			log.Fatal("Directory %s: %s", savepath, err)
+			log.Fatalf("Directory %s: %s", savepath, err)
 		}
 
 		for _, ent := range entries {
