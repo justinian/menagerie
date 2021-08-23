@@ -5,8 +5,7 @@ ADD . /build
 RUN go build -o menagerie
 
 
-FROM alpine:latest
-RUN apk --no-cache add ca-certificates
+FROM debian:bullseye-slim
 WORKDIR /app
 
 EXPOSE 8090
