@@ -7,6 +7,7 @@ import (
 	"os"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/jmoiron/sqlx"
@@ -273,13 +274,13 @@ func (l *Loader) watcher() {
 	for {
 		watcher, err := fsnotify.NewWatcher()
 		if err != nil {
-			log.Fatalf("Error creating file watcher: %s", err)
+			log.Fatalf("Error creating file watcher:\n%s", err)
 		}
 
 		for _, path := range l.saveFiles {
 			err = watcher.Add(path)
 			if err != nil {
-				log.Fatalf("Error watching %s: %s", path, err)
+				log.Fatalf("Error watching %s:\n%s", path, err)
 			}
 		}
 
@@ -287,16 +288,17 @@ func (l *Loader) watcher() {
 		case event := <-watcher.Events:
 			err = watcher.Close()
 			if err != nil {
-				log.Fatalf("Error closing watcher: %s", err)
+				log.Fatalf("Error closing watcher:\n%s", err)
 			}
 
+			time.Sleep(5 * time.Millisecond) // Wait for the rm/rename to finish
 			err = l.processSavefile(event.Name)
 			if err != nil {
-				log.Fatalf("Error reloading save %s: %s", err)
+				log.Fatalf("Error reloading save %s:\n%s", err)
 			}
 
 		case err := <-watcher.Errors:
-			log.Fatalf("Error watching save file: %s", err)
+			log.Fatalf("Error watching save file:\n%s", err)
 		}
 	}
 

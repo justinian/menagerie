@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
+	"io/fs"
 	"log"
 	"os"
-	"path"
-	"strings"
+	"path/filepath"
+	"regexp"
 
 	"github.com/spf13/pflag"
 )
@@ -27,31 +28,9 @@ func main() {
 		os.Exit(1)
 	}
 
-	saves := make([]string, 0, len(args))
-	for _, savepath := range args {
-		info, err := os.Stat(savepath)
-		if err != nil {
-			log.Fatalf("%s: %s", savepath, err)
-		}
-
-		if !info.IsDir() {
-			saves = append(saves, savepath)
-			continue
-		}
-
-		entries, err := os.ReadDir(savepath)
-		if err != nil {
-			log.Fatalf("Directory %s: %s", savepath, err)
-		}
-
-		for _, ent := range entries {
-			if ent.IsDir() {
-				continue
-			}
-			if strings.HasSuffix(ent.Name(), ".ark") {
-				saves = append(saves, path.Join(savepath, ent.Name()))
-			}
-		}
+	saves, err := findFiles(args)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	log.Print("Menagerie starting.")
@@ -71,4 +50,39 @@ func main() {
 	}
 
 	runServer(loader, address)
+}
+
+func findFiles(paths []string) ([]string, error) {
+	savePattern := regexp.MustCompile("[A-Z][a-z]+(_P)?.ark$")
+
+	saves := make([]string, 0, len(paths))
+
+	for _, path := range paths {
+		info, err := os.Stat(path)
+		if err != nil {
+			return nil, err
+		}
+
+		if !info.IsDir() {
+			saves = append(saves, path)
+			continue
+		}
+
+		err = filepath.WalkDir(path, func(path string, d fs.DirEntry, err error) error {
+			if err != nil {
+				return err
+			}
+
+			if !d.IsDir() && savePattern.MatchString(path) {
+				saves = append(saves, path)
+			}
+
+			return nil
+		})
+		if err != nil {
+			return nil, fmt.Errorf("Searching %s: %w", path, err)
+		}
+	}
+
+	return saves, nil
 }
