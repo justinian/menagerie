@@ -13,7 +13,7 @@ following config with `docker-compose`:
 
 ```
 menagerie:
-    image: justinian/menagerie
+    image: ghcr.io/justinian/menagerie
     container_name: menagerie
     restart: always
     volumes:
