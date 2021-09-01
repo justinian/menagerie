@@ -291,7 +291,7 @@ func (l *Loader) watcher() {
 				log.Fatalf("Error closing watcher:\n%s", err)
 			}
 
-			time.Sleep(5 * time.Millisecond) // Wait for the rm/rename to finish
+			time.Sleep(20 * time.Millisecond) // Wait for the rm/rename to finish
 			err = l.processSavefile(event.Name)
 			if err != nil {
 				log.Fatalf("Error reloading save %s:\n%s", err)
