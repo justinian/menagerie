@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"os"
@@ -111,19 +110,20 @@ func (l *Loader) processSavefile(filename string) error {
 		worldName = worldName[:len(worldName)-2]
 	}
 
-	tx, err := l.db.Begin()
+	tx, err := l.db.Beginx()
 	if err != nil {
 		return fmt.Errorf("Could not begin SQL transaction:\n%w", err)
 	}
 
-	res, err := tx.Exec(`
+	_, err = tx.Exec(`
 		INSERT INTO worlds (name) VALUES (?)
 		ON CONFLICT (name) DO UPDATE SET iter=iter+1`, worldName)
 	if err != nil {
 		return fmt.Errorf("Could not insert world name:\n%w", err)
 	}
 
-	worldId, err := res.LastInsertId()
+	var worldId int
+	err = tx.Get(&worldId, `SELECT (id) FROM worlds WHERE name = ?`, worldName)
 	if err != nil {
 		return fmt.Errorf("Could not get world id:\n%w", err)
 	}
@@ -146,7 +146,7 @@ func (l *Loader) processSavefile(filename string) error {
 	return nil
 }
 
-func (l *Loader) insertDinos(objlists [][]*ark.GameObject, world int, tx *sql.Tx) error {
+func (l *Loader) insertDinos(objlists [][]*ark.GameObject, world int, tx *sqlx.Tx) error {
 	stmt, err := tx.Prepare(`INSERT INTO dinos VALUES (
 									?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,
 									?,?,?,?,?,?,
@@ -256,7 +256,7 @@ func (l *Loader) insertDinos(objlists [][]*ark.GameObject, world int, tx *sql.Tx
 	return nil
 }
 
-func (l *Loader) getOrAddClass(tx *sql.Tx, bpName string) (int, error) {
+func (l *Loader) getOrAddClass(tx *sqlx.Tx, bpName string) (int, error) {
 	class := l.classMap.Get(bpName)
 	if class == nil {
 		class = l.classMap.Add(bpName)
