@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"sync"
@@ -10,12 +11,13 @@ import (
 )
 
 type apiHandler struct {
-	lock   sync.Mutex
-	loader *Loader
-	stmt   *sqlx.Stmt
+	lock      sync.Mutex
+	loader    *Loader
+	tamedStmt *sqlx.Stmt
+	wildStmt  *sqlx.Stmt
 }
 
-const getAllDinos = `
+const getTamedDinos = `
 SELECT
 	d.name,
 	w.name as world,
@@ -38,6 +40,26 @@ FROM
 LEFT JOIN worlds w ON d.world == w.id
 LEFT JOIN classes c1 ON d.class == c1.id
 LEFT JOIN classes c2 ON d.parent_class == c2.id
+WHERE
+	d.is_tamed = 1
+`
+
+const getWildDinos = `
+SELECT
+	w.name as world,
+	c1.name as class_name,
+	d.dino_id1|d.dino_id2 as dino_id,
+	level_wild,
+	level_total,
+	x, y, z,
+	color0, color1, color2, color3, color4, color5,
+	health_wild, stamina_wild, torpor_wild, oxygen_wild, food_wild, weight_wild, melee_wild, speed_wild
+FROM
+	dinos d
+LEFT JOIN worlds w ON d.world == w.id
+LEFT JOIN classes c1 ON d.class == c1.id
+WHERE
+	d.is_tamed = 0
 `
 
 type dinoResult struct {
@@ -101,27 +123,54 @@ type dinoResult struct {
 	SpeedTotal   int64 `json:"speed_total" db:"speed_total"`
 }
 
-func (ah *apiHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (ah *apiHandler) getDinos(tamed bool) ([]dinoResult, error) {
 	ah.loader.lock.Lock()
 	defer ah.loader.lock.Unlock()
 
 	db := ah.loader.db
 
-	if ah.stmt == nil {
-		stmt, err := db.Preparex(getAllDinos)
+	query := getWildDinos
+	stmt := ah.wildStmt
+	if tamed {
+		query = getTamedDinos
+		stmt = ah.tamedStmt
+	}
+
+	var err error
+	if stmt == nil {
+		stmt, err = db.Preparex(query)
 		if err != nil {
-			log.Printf("Error preparing SQL: %s", err)
-			http.Error(w, "Database Error", http.StatusInternalServerError)
-			return
+			return nil, fmt.Errorf("Database Error: %w", err)
 		}
 
-		ah.stmt = stmt
+		if tamed {
+			ah.tamedStmt = stmt
+		} else {
+			ah.wildStmt = stmt
+		}
 	}
 
 	var result []dinoResult
-	err := ah.stmt.Select(&result)
+	err = stmt.Select(&result)
 	if err != nil {
-		log.Printf("Error querying database: %s", err)
+		return nil, fmt.Errorf("Database Error: %w", err)
+	}
+
+	return result, nil
+}
+
+func (ah *apiHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		log.Printf("Error parsing query: %s", err)
+		http.Error(w, "Bad Request", http.StatusBadRequest)
+		return
+	}
+
+	tamed := r.Form.Get("type") != "wild"
+	result, err := ah.getDinos(tamed)
+	if err != nil {
+		log.Printf("Error loading dinos: %s", err)
 		http.Error(w, "Database Error", http.StatusInternalServerError)
 		return
 	}
@@ -141,7 +190,15 @@ func runServer(loader *Loader, addr string) {
 
 	sm := http.NewServeMux()
 	sm.Handle("/api/dinos", apiHandler)
-	sm.Handle("/", http.FileServer(http.Dir("static")))
+
+	fs := http.FileServer(http.Dir("static"))
+	sm.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/" {
+			http.Redirect(w, r, "/tamed.html", http.StatusFound)
+			return
+		}
+		fs.ServeHTTP(w, r)
+	})
 
 	log.Printf("Listening on: %s", addr)
 	log.Fatal(http.ListenAndServe(addr, loggingWrapper(sm)))

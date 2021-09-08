@@ -36,6 +36,14 @@ var showStats = function () {
     table.columns([42, 43, 44, 45, 46, 47, 48, 49]).visible(showTotal);
 };
 
+var showWildStats = function () {
+    var showBase = $( '#showBase' )[0].checked;
+    var showColor = $( '#showColor' )[0].checked;
+
+    table.columns([6, 7, 8, 9, 10, 11]).visible(showColor);
+    table.columns([12, 13, 14, 15, 16, 17, 18, 19]).visible(showBase);
+};
+
 var fixedFloat = function (data, type, row, meta) {
     return data.toFixed(0);
 };
@@ -80,7 +88,7 @@ var drawMap = function (canvas, world, x, y) {
     mapImage.src = "images/maps/" + world + ".webp";
 };
 
-var columns = [
+var tamedColumns = [
     {"data": "name", "title": "Name"},
     {"data": "world", "title": "World", "visible": false},
     {"data": "class_name", "title": "Class"},
@@ -140,9 +148,9 @@ var columns = [
     {"data": "speed_total", "title":"Sp", "searchBuilderTitle": "Total Speed"}
 ];
 
-var tableOptions = {
-    "ajax": {"url":"api/dinos", "dataSrc":""},
-    "columns": columns,
+var tamedTableOptions = {
+    "ajax": {"url":"api/dinos?type=tamed", "dataSrc":""},
+    "columns": tamedColumns,
 
     "dom": "rtpil",
     "pageLength": 50,
@@ -165,5 +173,58 @@ var tableOptions = {
                     26, 27, 28, 29, 30, 31, 32, 33,
                     34, 35, 36, 37, 38, 39, 40, 41,
                     42, 43, 44, 45, 46, 47, 48, 49]
+    }
+};
+
+var wildColumns = [
+    {"data": "world", "title": "World", "visible": false},
+    {"data": "class_name", "title": "Class"},
+    {"data": "levels_wild", "title": "Level"},
+
+    {"data": "x", "visible": false},
+    {"data": "y", "visible": false},
+    {"data": "z", "visible": false},
+
+    {"data": "color0", "render": colorFunc, "title": "C0", "searchBuilderTitle": "Color 0", "visible": false},
+    {"data": "color1", "render": colorFunc, "title": "C1", "searchBuilderTitle": "Color 1", "visible": false},
+    {"data": "color2", "render": colorFunc, "title": "C2", "searchBuilderTitle": "Color 2", "visible": false},
+    {"data": "color3", "render": colorFunc, "title": "C3", "searchBuilderTitle": "Color 3", "visible": false},
+    {"data": "color4", "render": colorFunc, "title": "C4", "searchBuilderTitle": "Color 4", "visible": false},
+    {"data": "color5", "render": colorFunc, "title": "C5", "searchBuilderTitle": "Color 5", "visible": false},
+
+    {"data": "health_wild", "title": "H", "searchBuilderTitle": "Base Health"},
+    {"data": "stamina_wild", "title": "St", "searchBuilderTitle": "Base Stamina"},
+    {"data": "torpor_wild", "title": "T", "searchBuilderTitle": "Base Torpor"},
+    {"data": "oxygen_wild", "title": "O", "searchBuilderTitle": "Base Oxygen"},
+    {"data": "food_wild", "title": "F", "searchBuilderTitle": "Base Food"},
+    {"data": "weight_wild", "title": "W", "searchBuilderTitle": "Base Weight"},
+    {"data": "melee_wild", "title": "M", "searchBuilderTitle": "Base Melee"},
+    {"data": "speed_wild", "title": "Sp", "searchBuilderTitle": "Base Speed"}
+];
+
+var wildTableOptions = {
+    "ajax": {"url":"api/dinos?type=wild", "dataSrc":""},
+    "columns": wildColumns,
+
+    "dom": "rtpil",
+    "pageLength": 50,
+    "scrollX": true,
+
+    "language": {
+        "searchBuilder": {
+            "title": ""
+        },
+    },
+
+    "select": {
+        "info": false,
+        "style": "single",
+    },
+
+    "searchBuilder": {
+        "columns": [0, 1, 2,
+                    6, 7, 8, 9, 10, 11,
+                    12, 13, 14, 15, 16, 17, 18, 19,
+                    20, 21, 22, 23, 24, 25, 26, 27]
     }
 };

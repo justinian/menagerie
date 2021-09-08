@@ -18,6 +18,7 @@ var databaseSchema = []string{`
 		list INTEGER,
 		world INTEGER,
 		class INTEGER,
+		is_tamed BOOLEAN,
 		name TEXT,
 		level_wild INTEGER,
 		level_tamed INTEGER,
@@ -78,3 +79,46 @@ var databaseSchema = []string{`
 		PRIMARY KEY (id, list, world)
 	);`,
 }
+
+const insertDino = `
+	INSERT INTO dinos (
+
+		id, list, world,
+		class, name, is_tamed,
+		level_wild, level_tamed,
+		dino_id1, dino_id2,
+		is_cryo, parent_class, parent_name,
+
+		x, y, z,
+
+		color0, color1, color2, color3, color4, color5,
+
+		health_current, stamina_current, torpor_current, oxygen_current,
+		food_current, weight_current, melee_current, speed_current,
+
+		health_wild, stamina_wild, torpor_wild, oxygen_wild,
+		food_wild, weight_wild, melee_wild, speed_wild,
+
+		health_tamed, stamina_tamed, torpor_tamed, oxygen_tamed,
+		food_tamed, weight_tamed, melee_tamed, speed_tamed
+	)
+	VALUES (
+		?, ?, ?,
+		?, ?, ?,
+		?, ?,
+		?, ?,
+		?, ?, ?,
+
+		?, ?, ?,
+
+		?, ?, ?, ?, ?, ?,
+
+		?, ?, ?, ?,
+		?, ?, ?, ?,
+
+		?, ?, ?, ?,
+		?, ?, ?, ?,
+
+		?, ?, ?, ?,
+		?, ?, ?, ?
+	)`

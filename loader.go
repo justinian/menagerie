@@ -147,23 +147,21 @@ func (l *Loader) processSavefile(filename string) error {
 }
 
 func (l *Loader) insertDinos(objlists [][]*ark.GameObject, world int, tx *sqlx.Tx) error {
-	stmt, err := tx.Prepare(`INSERT INTO dinos VALUES (
-									?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,
-									?,?,?,?,?,?,
-									?,?,?,?,?,?,?,?,
-									?,?,?,?,?,?,?,?,
-									?,?,?,?,?,?,?,?)`)
+	stmt, err := tx.Prepare(insertDino)
 	if err != nil {
 		return fmt.Errorf("Could not prepare SQL insert:\n%w", err)
 	}
 
 	for listNum, objlist := range objlists {
 		for i, obj := range objlist {
-			// TamedOnServerName is a good canary for tamed dinos
-			server := obj.Properties.Get("TamedOnServerName", 0)
-			if server == nil {
+			if obj.Properties.Get("DinoID1", 0) == nil {
+				// Only want dinos
 				continue
 			}
+
+			// TamedOnServerName is a good canary for tamed dinos
+			server := obj.Properties.Get("TamedOnServerName", 0)
+			tamed := server != nil
 
 			name := obj.Properties.GetString("TamedName", 0)
 			statsCurrent := make([]float64, 12)
@@ -219,23 +217,15 @@ func (l *Loader) insertDinos(objlists [][]*ark.GameObject, world int, tx *sqlx.T
 			}
 
 			_, err = stmt.Exec(
-				i,
-				listNum,
-				world,
-				classId,
-				name,
-				levelWild,
-				levelTamed,
-				dinoId1,
-				dinoId2,
-				obj.IsCryopod,
-				parentClass,
-				parentName,
+				i, listNum, world,
+				classId, name, tamed,
+				levelWild, levelTamed,
+				dinoId1, dinoId2,
+				obj.IsCryopod, parentClass, parentName,
 
 				loc.X, loc.Y, loc.Z,
 
-				colors[0], colors[1], colors[2],
-				colors[3], colors[4], colors[5],
+				colors[0], colors[1], colors[2], colors[3], colors[4], colors[5],
 
 				statsCurrent[0], statsCurrent[1], statsCurrent[2], statsCurrent[3],
 				statsCurrent[4], statsCurrent[7], statsCurrent[8], statsCurrent[9],
