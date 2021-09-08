@@ -1,8 +1,9 @@
-# Menagerie, a tool for exploring your ARK tames
+# Menagerie, a tool for exploring ARK creatures
 
-Menagerie provides a web interface to explore all the tamed dinos
-across multiple ARK: Survival Evolved game servers. It currently
-has no authentication, so isn't appropriate for PvP servers.
+Menagerie provides a web interface to explore all the tamed and
+wild dinos and creatures across multiple ARK: Survival Evolved
+game servers. It currently has no authentication, so isn't
+appropriate for PvP servers.
 
 ![screenshot](screenshot.jpg)
 
