@@ -13,10 +13,11 @@
 
     <script type="text/javascript" src="colors.js"></script>
     <script type="text/javascript" src="main.js"></script>
+    <script type="text/javascript" src="tamed.js"></script>
 
     <script type="text/javascript">
         $(document).ready( function () {
-            table = $('#dinos').DataTable(tamedTableOptions);
+            table = $('#dinos').DataTable(tableOptions);
 
             table.searchBuilder.container().prependTo( $('#searchBuilderDiv') );
             $( '#searchInput' ).on( 'keyup', function () {
