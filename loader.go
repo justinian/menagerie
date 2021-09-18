@@ -14,6 +14,21 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+// These wild dinos cannot be tamed (except the fish with the fish basket) and are
+// so plentiful that they slow the tool way down, so skip them.
+var ignoreClassPrefixes = []string{
+	"Ant_",
+	"ChupaCabra_",
+	"Cnidaria_",
+	"Coel_",
+	"Dragonfly_",
+	"FlyingAnt_",
+	"LightBug_",
+	"Piranha_",
+	"Salmon_",
+	"Trilobite_",
+}
+
 type Loader struct {
 	lock      sync.Mutex
 	db        *sqlx.DB
@@ -146,6 +161,15 @@ func (l *Loader) processSavefile(filename string) error {
 	return nil
 }
 
+func shouldSkipClass(bpName string) bool {
+	for _, ignoreBp := range ignoreClassPrefixes {
+		if strings.HasPrefix(bpName, ignoreBp) {
+			return true
+		}
+	}
+	return false
+}
+
 func (l *Loader) insertDinos(objlists [][]*ark.GameObject, world int, tx *sqlx.Tx) error {
 	stmt, err := tx.Prepare(insertDino)
 	if err != nil {
@@ -162,6 +186,10 @@ func (l *Loader) insertDinos(objlists [][]*ark.GameObject, world int, tx *sqlx.T
 			// TamedOnServerName is a good canary for tamed dinos
 			server := obj.Properties.Get("TamedOnServerName", 0)
 			tamed := server != nil
+
+			if !tamed && shouldSkipClass(obj.ClassName.Name) {
+				continue
+			}
 
 			name := obj.Properties.GetString("TamedName", 0)
 			statsCurrent := make([]float64, 12)
@@ -201,6 +229,10 @@ func (l *Loader) insertDinos(objlists [][]*ark.GameObject, world int, tx *sqlx.T
 
 				levelWild = csc.Properties.GetInt("BaseCharacterLevel", 0)
 				levelTamed = csc.Properties.GetInt("ExtraCharacterLevel", 0)
+
+				if levelWild == 0 {
+					continue
+				}
 			}
 
 			dinoId1 := obj.Properties.GetInt("DinoID1", 0)
