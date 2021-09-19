@@ -78,12 +78,13 @@ var columns = [
 ];
 
 var tableOptions = {
-    "ajax": {"url":"api/dinos?type=tamed", "dataSrc":""},
-    "columns": tamedColumns,
+    "ajax": {"url":"/api/tames", "dataSrc":""},
+    "columns": columns,
 
     "dom": "rtpil",
     "pageLength": 50,
     "scrollX": true,
+    "processing": true,
 
     "language": {
         "searchBuilder": {

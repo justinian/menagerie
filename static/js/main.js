@@ -1,3 +1,20 @@
+var populateWildLinks = function (listElement) {
+    $.ajax("/api/worlds", {
+        dataType: "json",
+        success: function(data, statusString, xhr) {
+            for (i = 0; i < data.length; i++) {
+                var item = document.createElement("li");
+                var link = document.createElement("a");
+                var worldName = document.createTextNode(data[i]["name"]);
+                link.classList.add("dropdown-item");
+                link.href = "wild.html#" + data[i]["id"]
+                link.appendChild(worldName);
+                item.appendChild(link);
+                listElement.appendChild(item);
+            }
+        }
+    });
+}
 
 var colorFunc = function (data, type, row, meta) {
     var c = null;

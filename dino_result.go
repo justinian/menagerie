@@ -103,5 +103,8 @@ FROM
 LEFT JOIN worlds w ON d.world == w.id
 LEFT JOIN classes c1 ON d.class == c1.id
 WHERE
-	d.is_tamed = 0
+	d.is_tamed = 0 AND
+	d.world = ?
 `
+
+const getWorlds = `SELECT id, name FROM worlds`

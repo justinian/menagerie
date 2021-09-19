@@ -7,7 +7,7 @@ var showStats = function () {
     table.columns([12, 13, 14, 15, 16, 17, 18, 19]).visible(showBase);
 };
 
-var wildColumns = [
+var columns = [
     {"data": "world", "title": "World", "visible": false},
     {"data": "class_name", "title": "Class"},
     {"data": "levels_wild", "title": "Level"},
@@ -33,13 +33,14 @@ var wildColumns = [
     {"data": "speed_wild", "title": "Sp", "searchBuilderTitle": "Base Speed"}
 ];
 
-var wildTableOptions = {
-    "ajax": {"url":"api/dinos?type=wild", "dataSrc":""},
-    "columns": wildColumns,
+var tableOptions = {
+    "ajax": {"dataSrc":""},
+    "columns": columns,
 
     "dom": "rtpil",
     "pageLength": 50,
     "scrollX": true,
+    "processing": true,
 
     "language": {
         "searchBuilder": {
@@ -55,7 +56,15 @@ var wildTableOptions = {
     "searchBuilder": {
         "columns": [0, 1, 2,
                     6, 7, 8, 9, 10, 11,
-                    12, 13, 14, 15, 16, 17, 18, 19,
-                    20, 21, 22, 23, 24, 25, 26, 27]
+                    12, 13, 14, 15, 16, 17, 18, 19]
+    }
+};
+
+var setTableWorld = function (table) {
+    var id = window.location.hash.substr(1);
+    if (id.length > 0) {
+        table.rows({selected: true}).deselect();
+        url = "/api/worlds/" + id + "/dinos";
+        table.ajax.url(url).load();
     }
 };
