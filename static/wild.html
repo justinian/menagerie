@@ -39,6 +39,13 @@
             var wilds = document.getElementById("wildDropdown");
             populateWildLinks(wilds);
 
+            var overlay = document.getElementById("largeMapOverlay");
+            var canvas = document.getElementById("dinoWorldMap");
+            var largeCanvas = document.getElementById("dinoWorldMapLarge");
+            largeCanvas.onclick = function () {
+                overlay.style.display = "none";
+            };
+
             table.on( "select", function () {
                 row = table.row({"selected":true}).data();
 
@@ -69,8 +76,11 @@
                     }
                 }
 
-                var canvas = document.getElementById("dinoWorldMap");
                 drawMap(canvas, row.world, row.x, row.y);
+                canvas.onclick = function () {
+                    overlay.style.display = "block";
+                    drawMap(largeCanvas, row.world, row.x, row.y);
+                };
             });
         });
     </script>
@@ -98,6 +108,15 @@
         z-index: 1000;
         color: #fff;
         background: rgba(0.6, 0.6, 0.6, 0.25);
+    }
+
+    .overlay {
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 100%;
+        z-index: 1000;
     }
     </style>
 </head>
@@ -183,6 +202,16 @@
             </div>
         </div>
 
+    </div>
+</div>
+
+<div class="container-fluid p-2 m-4 overlay" style="display: none" id="largeMapOverlay">
+    <div class="row justify-content-center">
+        <div class="col-8">
+            <div class="card" style="width: 100%">
+                <canvas id="dinoWorldMapLarge"></canvas>
+            </div>
+        </div>
     </div>
 </div>
 
