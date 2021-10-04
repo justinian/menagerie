@@ -9,7 +9,7 @@ var showStats = function () {
 
 var columns = [
     {"data": "world", "title": "World", "visible": false},
-    {"data": "class_name", "title": "Class"},
+    {"data": "class_name", "title": "Class", "render": renderName},
     {"data": "levels_wild", "title": "Level"},
 
     {"data": "x", "visible": false},

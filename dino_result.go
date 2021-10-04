@@ -8,6 +8,7 @@ type dinoResult struct {
 	LevelsWild  int    `json:"levels_wild" db:"level_wild"`
 	LevelsTamed int    `json:"levels_tamed" db:"level_tamed"`
 	LevelsTotal int    `json:"levels_total" db:"level_total"`
+	IsFemale    bool   `json:"is_female" db:"is_female"`
 
 	IsCryopod   bool    `json:"is_cryo" db:"is_cryo"`
 	ParentClass *string `json:"parent_class" db:"parent_class"`
@@ -70,6 +71,7 @@ SELECT
 	level_wild,
 	level_tamed,
 	level_total,
+	d.is_female,
 	is_cryo,
 	c2.name as parent_class,
 	parent_name,
@@ -95,6 +97,7 @@ SELECT
 	d.dino_id1|d.dino_id2 as dino_id,
 	level_wild,
 	level_total,
+	d.is_female,
 	x, y, z,
 	color0, color1, color2, color3, color4, color5,
 	health_wild, stamina_wild, torpor_wild, oxygen_wild, food_wild, weight_wild, melee_wild, speed_wild

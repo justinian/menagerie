@@ -18,6 +18,7 @@ var databaseSchema = []string{`
 		list INTEGER,
 		world INTEGER,
 		class INTEGER,
+		is_female BOOLEAN,
 		is_tamed BOOLEAN,
 		name TEXT,
 		level_wild INTEGER,
@@ -84,7 +85,7 @@ const insertDino = `
 	INSERT INTO dinos (
 
 		id, list, world,
-		class, name, is_tamed,
+		class, name, is_female, is_tamed,
 		level_wild, level_tamed,
 		dino_id1, dino_id2,
 		is_cryo, parent_class, parent_name,
@@ -104,7 +105,7 @@ const insertDino = `
 	)
 	VALUES (
 		?, ?, ?,
-		?, ?, ?,
+		?, ?, ?, ?,
 		?, ?,
 		?, ?,
 		?, ?, ?,

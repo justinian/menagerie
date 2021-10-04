@@ -35,11 +35,16 @@
 
             table.on( "select", function () {
                 row = table.row({"selected":true}).data();
+                name = "Unnamed " + row.class_name;
                 if (row.name) {
-                    $( '#dinoName' ).html(row.name);
-                } else {
-                    $( '#dinoName' ).html("Unnamed " + row.class_name);
+                    name = row.name;
                 }
+
+                if (row.is_female) {
+                    name += " " + String.fromCodePoint(0x2640);
+                }
+
+                $( '#dinoName' ).html(name);
 
                 $( '#dinoWorldName' ).html(row.world);
                 $( '#dinoId' ).html(row.dino_id);
@@ -79,6 +84,10 @@
     </script>
 
     <style>
+    .name_female {
+        color: #ff00ff;
+    }
+
     .swatch {
         float: left;
         height: 18px;

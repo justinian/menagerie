@@ -200,6 +200,15 @@ func (l *Loader) insertDinos(objlists [][]*ark.GameObject, world int, tx *sqlx.T
 
 			loc := obj.Location
 
+			isFemale := false
+			sexProp := obj.Properties.Get("bIsFemale", 0)
+			if sexProp != nil {
+				boolProp, ok := sexProp.(*ark.BoolProperty)
+				if ok {
+					isFemale = boolProp.Value
+				}
+			}
+
 			var err error
 			parentClass := 0
 			parentName := ""
@@ -250,7 +259,7 @@ func (l *Loader) insertDinos(objlists [][]*ark.GameObject, world int, tx *sqlx.T
 
 			_, err = stmt.Exec(
 				i, listNum, world,
-				classId, name, tamed,
+				classId, name, isFemale, tamed,
 				levelWild, levelTamed,
 				dinoId1, dinoId2,
 				obj.IsCryopod, parentClass, parentName,

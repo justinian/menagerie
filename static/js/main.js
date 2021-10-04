@@ -1,3 +1,10 @@
+var renderName = function (data, type, row, meta) {
+    if (type === "display" && row.is_female) {
+        return "<span class='name_female'>" + data + "</span>";
+    }
+    return data;
+}
+
 var populateWildLinks = function (listElement) {
     $.ajax("/api/worlds", {
         dataType: "json",
