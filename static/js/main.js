@@ -56,7 +56,7 @@ var maps = {
     "Valguero": {"shiftx": 0.5, "shifty": 0.5, "mulx": 816000, "muly": 816000},
     "CrystalIsles": {"shiftx": 0.4875, "shifty": 0.5, "mulx": 1600000, "muly": 1700000},
     "Genesis": {"shiftx": 0.5, "shifty": 0.5, "mulx": 1050000, "muly": 1050000},
-    "Genesis2": {"shiftx": 0.49655, "shifty": 0.49655, "mulx": 1450000, "muly": 1450000},
+    "Gen2": {"shiftx": 0.49655, "shifty": 0.49655, "mulx": 1450000, "muly": 1450000},
     "LostIsland": {"shiftx": 0.51634, "shifty": 0.4902, "mulx": 1530000, "muly": 1530000},
 };
 
