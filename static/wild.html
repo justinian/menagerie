@@ -58,6 +58,7 @@
 
                 $( '#dinoWorldName' ).html(row.world);
                 $( '#dinoId' ).html(row.dino_id);
+                $( '#dinoClass' ).html(`<a target="_blank" href="https://ark.wiki.gg/wiki/${row.class_name}">${row.class_name}</a>`);
 
                 for (var i = 0; i < 6; i++) {
                     var id = "#dinoColor" + i;
@@ -174,6 +175,11 @@
                     <tr>
                         <th>Dino ID</th>
                         <td id="dinoId"></td>
+                    </tr>
+
+                    <tr>
+                        <th>Class</th>
+                        <td id="dinoClass"></td>
                     </tr>
 
                 </table>

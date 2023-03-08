@@ -55,7 +55,7 @@
 
                 $( '#dinoWorldName' ).html(row.world);
                 $( '#dinoId' ).html(row.dino_id);
-                $( '#dinoClass' ).html(row.class_name);
+                $( '#dinoClass' ).html(`<a target="_blank" href="https://ark.wiki.gg/wiki/${row.class_name}">${row.class_name}</a>`);
 
                 if (row.is_cryo) {
                     if (row.parent_name) {
