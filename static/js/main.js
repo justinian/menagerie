@@ -46,7 +46,7 @@ var fixedFloat = function (data, type, row, meta) {
     return data.toFixed(0);
 };
 
-// See: https://ark.fandom.com/wiki/Coordinates
+// See: https://ark.wiki.gg/wiki/Coordinates
 var maps = {
     "TheIsland": {"shiftx": 0.5, "shifty": 0.5, "mulx": 800000, "muly": 800000},
     "ScorchedEarth": {"shiftx": 0.5, "shifty": 0.5, "mulx": 800000, "muly": 800000},
@@ -58,6 +58,7 @@ var maps = {
     "Genesis": {"shiftx": 0.5, "shifty": 0.5, "mulx": 1050000, "muly": 1050000},
     "Gen2": {"shiftx": 0.49655, "shifty": 0.49655, "mulx": 1450000, "muly": 1450000},
     "LostIsland": {"shiftx": 0.51634, "shifty": 0.4902, "mulx": 1530000, "muly": 1530000},
+    "Fjordur": {"shiftx": 0.5, "shifty": 0.5, "mulx": 714100, "muly": 714100},
 };
 
 var drawMap = function (canvas, world, x, y) {
